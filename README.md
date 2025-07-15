@@ -1,7 +1,7 @@
 # kaplan-meier-geochemistry
 Interface en ligne de commande pour la méthode de Kaplan-Meier appliquée aux données géochimiques.
 
-<img src="figures/Ba_KM-CDF.png" width="33%">
+<img src="figures/Ba_KM-CDF.png" width="60%" class="center">
 
 ## Packages nécessaires
 Nécessite Python avec les librairies
