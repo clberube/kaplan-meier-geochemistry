@@ -10,10 +10,11 @@ Nécessite Python avec les librairies
 - tqdm
 
 ## Comment utiliser le script
-0. Télécharger le répertoire GitHub vers un répertoire local.
-0. Ouvrir un terminal avec Python
-0. Naviguer vers le répertoire local avec `cd chemin/vers/dossier"`
-0. Utiliser la commande et ses différentes options : `python kaplan_meier.py "data/ba.csv" "Ba" --bootstrap 100 --impute --unit "ppm"`
+1. Télécharger le répertoire GitHub vers un répertoire local
+1. Ouvrir un terminal avec Python
+1. Naviguer vers le répertoire local avec `cd chemin/vers/dossier"`
+1. Utiliser la commande et ses différentes options :
+`python kaplan_meier.py "data/ba.csv" "Ba" --bootstrap 100 --impute --unit "ppm"`
 
 ## Aide pour le script
 Entrez la commande `python kaplan_meier.py -h` pour imprimer l'aide :
