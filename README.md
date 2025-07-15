@@ -13,7 +13,7 @@ Nécessite Python avec les librairies
 1. Télécharger le répertoire GitHub vers un répertoire local
 1. Ouvrir un terminal avec Python
 1. Naviguer vers le répertoire local avec `cd chemin/vers/dossier"`
-1. Utiliser la commande et ses différentes options :
+1. Utiliser la commande et ses différentes options :  
 `python kaplan_meier.py "data/ba.csv" "Ba" --bootstrap 100 --impute --unit "ppm"`
 
 ## Aide pour le script
