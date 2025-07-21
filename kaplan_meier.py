@@ -11,10 +11,11 @@ from tqdm import tqdm
 def run_kaplan_meier_analysis(input_file, element, unit, bootstrap, impute):
 
     # Load data
-    df = pd.read_csv(input_file)
+    input_path = Path(input_file)
+    df = pd.read_csv(input_path)
 
     print("\n--- File name ---")
-    print(Path(input_file))
+    print(input_path)
 
     print("\n--- Element name ---")
     print(element)
@@ -113,22 +114,42 @@ def run_kaplan_meier_analysis(input_file, element, unit, bootstrap, impute):
     print()
     boot_results = bootstrap_rkm(df, n_boot=bootstrap, timeline=timeline)
 
+    summary_rows = []  # list to store rows for the CSV
+
     # --- Summary with 95% confidence intervals ---
     def summarize(name, values):
         values = values[~np.isnan(values)]
         est = np.mean(values)
         ci_low = np.percentile(values, 2.5)
         ci_high = np.percentile(values, 97.5)
+
+        # Print nicely formatted output
         formatted = f"{name:<12} = {est:8.3f}   (95% CI: {ci_low:8.3f} - {ci_high:8.3f})   {unit:>1}"
         print(formatted)
 
+        # Save row for CSV export
+        summary_rows.append(
+            {
+                "Statistique": name,
+                "Estimation": est,
+                "IC_95_inf": ci_low,
+                "IC_95_sup": ci_high,
+                "Unité": unit,
+            }
+        )
+
     print("\n--- Bootstrapped confidence intervals ---")
-    summarize("Mean", boot_results["mean"])
-    summarize("Median", boot_results["median"])
-    summarize("1st pct", boot_results["p01"])
-    summarize("25th pct", boot_results["p25"])
-    summarize("75th pct", boot_results["p75"])
-    summarize("99th pct", boot_results["p99"])
+    summarize("Moyenne", boot_results["mean"])
+    summarize("Médiane", boot_results["median"])
+    summarize("1er pct", boot_results["p01"])
+    summarize("25e pct", boot_results["p25"])
+    summarize("75e pct", boot_results["p75"])
+    summarize("99e pct", boot_results["p99"])
+
+    # --- Export to CSV ---
+    df_summary = pd.DataFrame(summary_rows)
+    stats_file = input_path.with_name(f"{input_path.stem}_stats{input_path.suffix}")
+    df_summary.to_csv(stats_file, index=False)
 
     # Sampling function: randomly sample from conditional distribution < DL
     concentrations = sf.index.values
@@ -146,8 +167,7 @@ def run_kaplan_meier_analysis(input_file, element, unit, bootstrap, impute):
         return np.random.choice(x, size=n, p=p_diff / p_diff.sum())
 
     if impute:
-        path = Path(input_file)
-        output_file = path.with_name(f"{path.stem}_imp{path.suffix}")
+        output_file = input_path.with_name(f"{input_path.stem}_imp{input_path.suffix}")
         # Apply imputation to censored values
         df_imputed = df.copy()
         df_imputed[element + "_imp"] = df_imputed[element].copy()
@@ -196,8 +216,11 @@ def run_kaplan_meier_analysis(input_file, element, unit, bootstrap, impute):
     ax.set_xscale("log")
 
     plt.tight_layout()
-    fig_name = f"{element}_KM-CDF.png"
-    plt.savefig(fig_name, dpi=300, bbox_inches="tight")
+    fig_dir = f"./figures/"
+    Path(fig_dir).mkdir(parents=True, exist_ok=True)
+    fig_name = f"{element}_KM-CDF"
+    fig_fpath = Path(fig_dir, fig_name).with_suffix(".png")
+    plt.savefig(fig_fpath, dpi=300, bbox_inches="tight")
 
     print("\n--- Figure saved as ---")
     print(fig_name)
