@@ -223,7 +223,7 @@ def run_kaplan_meier_analysis(input_file, element, unit, bootstrap, impute):
     plt.savefig(fig_fpath, dpi=300, bbox_inches="tight")
 
     print("\n--- Figure saved as ---")
-    print(fig_name)
+    print(fig_fpath)
     print("Close figure to exit program.")
     plt.show()
 
